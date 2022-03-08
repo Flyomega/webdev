@@ -1,0 +1,19 @@
+<h2> All about <span style="text-transform:capitalize;">{{person.name}}</span></h2>
+<br>
+<h3>Name : <span style="text-transform:capitalize;">{{person.name}}</span></h3>
+<br>
+{{#if person.dob}}
+
+<h3>Date of Birth : {{person.dob}}</h3>
+<br>
+{{/if}}
+
+{{#if person.description}}
+
+<p>{{person.description}}</p>
+<br>
+{{/if}}
+
+<img src={{person.imageurl}} id="hr" alt="photo of the person">
+
+
