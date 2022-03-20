@@ -2,6 +2,8 @@ const express = require('express');
 const router = express.Router();
 const { readStaff } = require('../models/staff');
 const { createStaff } = require('../models/staff');
+const { deleteStaff } = require('../models/staff');
+const { updateStaff } = require('../models/staff');
 
 // var data = {
 //     "nounours": {
@@ -27,16 +29,16 @@ const { createStaff } = require('../models/staff');
 // }
 
 
-router.post('/addnew', (req, res) => {
-    console.log("Data sent via post");
-    console.table(req.body);
-    res.redirect(303, 'personadded')
+router.post('/addnew', async (req, res) => {
+    await createStaff(req.body);
+    res.redirect(303, '/staff/personadded')
+
+    // console.log("Data sent via post");
+    // console.table(req.body);
+    // res.redirect(303, 'personadded')
 })
 
 router.get('/addnew', (req, res) => {
-    var fname = req.query.firstname;
-    var sname = req.query.surname;
-    console.log('Date entered ' + fname + ' ' + sname);
     res.render('personform')
 })
 
@@ -52,10 +54,11 @@ router.get('/', async (req, res) => {
 
 })
 
+
 router.get('/:name', async (req, res) => {
     var name = req.params.name;
-
     const person = await readStaff({ 'name': name })
+    console.log(person);
 
     if (!person) {
         console.log('404 because person doesn\'t exist');
@@ -66,21 +69,38 @@ router.get('/:name', async (req, res) => {
     }
 })
 
+router.get('/:name/delete', async (req, res) => {
+    var name = req.params.name;
 
+    await deleteStaff(name);
 
-// router.get('/', (req, res) =>
-//     res.render('listing', { personlist: data }))
+    res.redirect(303, '/staff');
 
-// router.get('/:name', (req, res) => {
-//     var name = req.params.name;
-//     if (name in data) {
-//         res.render('person', { person: data[name] })
-//     }
-//     else {
-//         res.status(404);
-//         res.send('404 - Not Found');
-//     }
-// })
+});
+
+router.post('/:name/edit', async (req,res) =>{
+
+    await updateStaff(req.body);
+    
+    res.redirect(303, '/staff')
+
+})
+
+router.get('/:name/edit', async (req, res) => {
+
+    var name = req.params.name;
+
+    const person = await readStaff({'name': name})
+
+    if (!person) {
+        console.log('404 because person doesn\'t exist');
+        res.render('404');
+    }
+    else {
+        res.render('personeditform', { person: person });
+    }
+})
+
 
 
 module.exports = router;
