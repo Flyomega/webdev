@@ -2,6 +2,7 @@ const express = require('express')
 const app = express()
 const port = 3000
 
+session = require('express-session');
 const newsMiddleware = require('./lib/middleware')
 const home = require('./routes/home')
 const staff = require('./routes/staff')
@@ -59,6 +60,14 @@ db.once('open', () => {
 
 app.use(express.urlencoded({ extended: true }))
 
+
+app.use(session(
+    {
+        secret: "una is great!!",
+        cookie: { maxage: 6000 },
+        resave: false,
+        saveUninitialized: false
+    }))
 
 app.use(newsMiddleware)
 app.use(cookieParser("una is great"));

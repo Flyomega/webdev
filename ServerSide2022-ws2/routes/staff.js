@@ -5,6 +5,8 @@ const { createStaff } = require('../models/staff');
 const { deleteStaff } = require('../models/staff');
 const { updateStaff } = require('../models/staff');
 
+session = require('express-session');
+
 // var data = {
 //     "nounours": {
 //         "name": "nounours",
@@ -31,6 +33,7 @@ const { updateStaff } = require('../models/staff');
 
 router.post('/addnew', async (req, res) => {
     await createStaff(req.body);
+    req.session.staffdata = { name: req.body.name};
     res.redirect(303, '/staff/personadded')
 
     // console.log("Data sent via post");
@@ -44,14 +47,18 @@ router.get('/addnew', (req, res) => {
 
 
 router.get('/personadded', (req, res) => {
-    res.render('personadded')
+    if (req.session.staffdata) {
+        var newName = req.session.staffdata.name;
+    }
+    else {
+        var newName = "";
+    }
+    res.render('personadded', {newName : newName })
 })
 
 router.get('/', async (req, res) => {
     const staff = await readStaff();
-
-    res.render('listing', { personlist: staff })
-
+    res.render('listing', { personlist: staff})
 })
 
 
